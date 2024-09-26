@@ -14,6 +14,6 @@ if __name__ == "__main__":
     application = tornado.web.Application([
         (r"/", MainHandler),
         (r"/bmi", webio_handler(bmi)),  # bmi is the same function as above
-    ])
-    application.listen(port=8080, address='62.109.6.117')
+    ], xheaders=True)
+    application.listen(port=8080, address='http://62.109.6.117')
     tornado.ioloop.IOLoop.current().start()

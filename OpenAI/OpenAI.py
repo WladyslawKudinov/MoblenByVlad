@@ -2,10 +2,23 @@ import os
 import json
 from openai import OpenAI
 from dotenv import load_dotenv
+import httpx
+import requests
+from requests.auth import HTTPProxyAuth
 
 load_dotenv()
 print(os.environ.get("OPENAI_API_KEY"))
-client = OpenAI(api_key = os.environ.get("OPENAI_API_KEY"))
+http_proxy = "http://195.133.82.139"
+https_proxy = "https://195.133.82.139"
+
+proxies = {
+    "http://": http_proxy,
+    "https://": https_proxy,
+}
+
+client = OpenAI(api_key = os.environ.get("OPENAI_API_KEY"),
+                http_client=httpx.Client(proxy="http://ggPTwTMH:CMh3vchM@195.133.82.139:62940")
+    )
 
 def create_responce(variables, stage):
     #setting stage prompt
