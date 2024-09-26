@@ -47,14 +47,16 @@ def next_stage():
 
     elif stage == 2:  # Стадия 2: Детализация
         variables['detalization_answers'] = user_input
-        response = create_responce(variables, stage)
+        response = create_responce(variables, stage).choices[0].message.content
         session['stage'] = 3  # Переход к заданиям
 
     elif stage == 3:  # Стадия 3: Генерация и вывод заданий
         # Генерируем задания с помощью твоего модуля
         response_data = create_responce(variables, stage)
+        print(response_data)
         for i in range(1, 5):
             variables[f"task{i}"] = response_data[f"task{i}"]
+            print(response_data[f"task{i}"])
         response = f"Вот твоё первое задание: {variables['task1']}"
         session['stage'] = 3.1  # Переход к заданиям
 
@@ -71,14 +73,15 @@ def next_stage():
     elif stage == 3.3:  # Стадия 4: Пользователь выполняет задания
         variables['answer3'] = user_input
         response = f"Теперь четвертое задание: {variables['task4']}"
-        session['stage'] = 3.4  # Переход к следующему заданию
+        session['stage'] = 4  # Переход к следующему заданию
 
-    elif stage == 3.4:  # Стадия 4: Пользователь выполняет задания
+    elif stage == 4:  # Стадия 4: Пользователь выполняет задания
         variables['answer4'] = user_input
-        response = create_responce(variables, stage)
-        session['stage'] = 4
+        response = create_responce(variables, stage).choices[0].message.content
+        print(response)
+        session['stage'] = 5
 
-    else:
+    elif stage == 5:
         response = "Спасибо за участие! 🚀"
         session['stage'] = 0  # Сброс на начало
 
