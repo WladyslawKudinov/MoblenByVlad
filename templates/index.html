@@ -3,34 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Чатбот Зари</title>
+    <title>Чатбот Заря</title>
     <!-- Подключаем Bootstrap -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
+        body {
+            background-color: #e9ecef; /* Softer background color for the body */
+        }
         .chat-container {
-            max-width: 600px;
+            max-width: 800px; /* Increased width for better readability */
             margin: 50px auto;
-            background-color: #f8f9fa;
+            background-color: #fff; /* Chat box background */
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 100px); /* Stretched to fit screen with gap at bottom */
         }
         .chat-box {
-            height: 400px;
-            overflow-y: scroll;
+            flex-grow: 1;
+            overflow-y: auto;
             padding: 10px;
-            background-color: #fff;
-            border-radius: 10px;
-            border: 1px solid #ccc;
+            background-color: transparent; /* Make background transparent */
+            /* Removed borders to create a seamless look */
         }
         .message {
-            margin-bottom: 15px;
-        }
-        .user-message {
-            text-align: right;
+            position: relative;
+            margin-bottom: 10px; /* Reduced margin for tighter layout */
+            padding: 10px 15px; /* Added horizontal padding */
+            border-radius: 10px;
+            background-color: #f8f9fa; /* Softer background for messages */
+            word-wrap: break-word; /* Ensures words wrap inside the box */
+            overflow-wrap: break-word; /* Supports older browsers for word wrapping */
+            display: flex; /* Make message container a flexbox */
+            align-items: center; /* Align items at the center */
         }
         .bot-message {
             text-align: left;
+            white-space: pre-wrap;
+        }
+        .user-message {
+            text-align: right;
+            background-color: #d1e7dd; /* Light green background for user messages */
+        }
+        .profile-pic {
+            width: 50px; /* Increased icon size */
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 10px; /* Space between icon and text */
+        }
+        .input-group {
+            margin-top: 10px;
+        }
+        .bot-message img {
+            display: inline-block;
+        }
+        .bot-message pre {
+            margin: 0; /* Removes extra spacing */
+            white-space: pre-wrap; /* Ensures text wraps within the preformatted text */
+        }
+        .message-text {
+            font-size: 1rem; /* Set font size */
+            color: #343a40; /* Darker text color for better readability */
         }
     </style>
 </head>
@@ -38,10 +73,16 @@
 
     <div class="container chat-container">
         <div class="chat-box" id="chatBox">
-            <div class="bot-message message" id="welcomeMsg">Привет, меня зовут Зари! Я буду твоим проектным наставником, и я очень хотела бы с тобой познакомиться, как тебя зовут?🥹</div>
+            <!-- Example of Zari's first message -->
+            <div class="bot-message message">
+                <img src="{{ url_for('static', filename='zari.png') }}" alt="Bot" class="profile-pic">
+                <div class="message-text">
+                    Привет, меня зовут Заря! Я буду твоим проектным наставником, и я очень хотела бы с тобой познакомиться, как тебя зовут?🥹
+                </div>
+            </div>
         </div>
 
-        <div class="input-group mt-3">
+        <div class="input-group">
             <input type="text" class="form-control" id="userInput" placeholder="Ваш ответ...">
             <div class="input-group-append">
                 <button class="btn btn-primary" id="sendBtn">Отправить</button>
@@ -77,7 +118,8 @@
                         contentType: 'application/json',
                         data: JSON.stringify({ user_input: userInput }),
                         success: function(response) {
-                            $('#chatBox').append('<div class="bot-message message">' + response.response + '</div>');
+                            var botMessage = formatMessage(response.response);
+                            $('#chatBox').append(botMessage);
                             $('#chatBox').scrollTop($('#chatBox')[0].scrollHeight);
                         },
                         error: function() {
@@ -85,6 +127,23 @@
                         }
                     });
                 }
+            }
+
+            // Function to format the bot's message with bold and numeration handling
+            function formatMessage(message) {
+                // Handle bold formatting for words between **
+                message = message.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+                // Add new lines before numerations (e.g., 1., 2., etc.)
+                message = message.replace(/(\d+\.\s)/g, '\n$1');
+
+                // Return the formatted message with Zari's icon
+                return `
+                    <div class="bot-message message">
+                        <img src="{{ url_for('static', filename='zari.png') }}" alt="Bot" class="profile-pic">
+                        <div class="message-text">${message}</div>
+                    </div>
+                `;
             }
         });
     </script>
