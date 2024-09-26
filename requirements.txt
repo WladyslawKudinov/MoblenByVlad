@@ -27,3 +27,4 @@ ua-parser==0.18.0
 user-agents==2.2.0
 Werkzeug==3.0.4
 gunicorn==20.1.0
+requests==2.26.0
