@@ -8,107 +8,191 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            background-color: #e9ecef; /* Softer background color for the body */
-        }
-        .chat-container {
-            max-width: 800px; /* Increased width for better readability */
-            margin: 50px auto;
-            background-color: #fff; /* Chat box background */
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            background-color: #f5f5f5; /* Молочно-белый фон страницы */
+            height: 100vh;
+            margin: 0;
             display: flex;
             flex-direction: column;
-            height: calc(100vh - 100px); /* Stretched to fit screen with gap at bottom */
         }
+        .navbar {
+            background-color: #007bff;
+            padding: 10px 20px;
+            position: relative;
+            z-index: 100;
+        }
+        .navbar-brand, .nav-link {
+            color: #fff !important;
+        }
+        .navbar-brand {
+            font-weight: bold;
+        }
+        .nav-link:hover {
+            color: #ffdd57 !important; /* Link hover effect */
+        }
+        .navbar-nav .nav-item {
+            margin-left: 20px;
+        }
+
+        /* Контейнер для чата */
+        .container-fluid {
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Центрирование контейнера чата */
+            height: calc(100vh - 56px); /* Высота экрана минус высота шапки */
+        }
+        .chat-container {
+            flex-grow: 1;
+            width: calc(100% - 200px); /* Чат на 200px уже */
+            max-width: 800px; /* Максимальная ширина для ограничения слишком больших экранов */
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            background-color: transparent; /* Убираем цвет фона */
+        }
+
+        /* Окно чата с внутренним скроллингом */
         .chat-box {
             flex-grow: 1;
             overflow-y: auto;
-            padding: 10px 15px; /* Add padding around the chat box */
-            background-color: transparent; /* Make background transparent */
+            padding: 10px 15px;
+            background-color: transparent;
         }
+
+        /* Стиль сообщений */
         .message {
             position: relative;
-            margin-bottom: 10px; /* Reduced margin for tighter layout */
-            padding: 10px 15px; /* Added horizontal padding */
+            margin-bottom: 10px;
+            padding: 10px 15px;
             border-radius: 10px;
-            background-color: #f8f9fa; /* Softer background for messages */
-            display: flex; /* Make message container a flexbox */
-            align-items: flex-start; /* Align items at the start */
+            background-color: #f8f9fa;
+            display: flex;
+            align-items: flex-start;
         }
+
         .bot-message {
             text-align: left;
             white-space: pre-wrap;
-            word-wrap: break-word; /* Ensures words wrap inside the box */
-            overflow-wrap: break-word; /* Supports older browsers for word wrapping */
+            word-wrap: break-word;
+            overflow-wrap: break-word;
         }
+
         .user-message {
             text-align: left;
-            background-color: #d1e7dd; /* Light green background for user messages */
-            max-width: 65%; /* Set maximum width for user messages */
-            align-self: flex-end; /* Align user messages to the right */
-            word-wrap: break-word; /* Ensure user messages wrap */
-            overflow-wrap: break-word; /* Ensure user messages wrap */
-            margin-left: auto; /* Align the user's message to the right */
-            padding: 10px; /* Add padding for user messages */
-            white-space: pre-wrap; /* Ensure text wraps correctly */
-            word-break: break-word; /* Break words if they are too long */
+            background-color: #d1e7dd;
+            max-width: 65%;
+            align-self: flex-end;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            margin-left: auto;
+            padding: 10px;
+            white-space: pre-wrap;
+            word-break: break-word;
         }
 
         .profile-pic {
-            width: 50px; /* Increased icon size */
+            width: 50px;
             height: 50px;
             border-radius: 50%;
-            margin-right: 10px; /* Space between icon and text */
-            margin-top: 5px; /* Position the icon slightly down */
+            margin-right: 10px;
+            margin-top: 5px;
         }
-        .input-group {
+
+        /* Стиль поля ввода */
+        .input-container {
+            display: flex;
             margin-top: 10px;
+            width: 100%;
         }
-        .bot-message img {
-            display: inline-block;
+
+        .input-group {
+            flex-grow: 1;
         }
-        .bot-message pre {
-            margin: 0; /* Removes extra spacing */
-            white-space: pre-wrap; /* Ensures text wraps within the preformatted text */
+
+        .form-control {
+            border-radius: 20px; /* Закругленные края у поля ввода */
+            resize: none; /* Запрещаем изменение размеров вручную */
+            overflow-y: auto; /* Поле ввода может расширяться вертикально */
+            padding: 10px;
         }
-        .message-text {
-            font-size: 1rem; /* Set font size */
-            color: #343a40; /* Darker text color for better readability */
+
+        /* Убираем тень у кнопки */
+        .btn-primary {
+            border-radius: 20px;
+            box-shadow: none;
+        }
+
+        /* Анимация при вводе */
+        .form-control:focus {
+            box-shadow: none;
         }
     </style>
 </head>
 <body>
 
-    <div class="container chat-container">
-        <div class="chat-box" id="chatBox">
-            <!-- Example of Заря's first message -->
-            <div class="bot-message message">
-                <img src="{{ url_for('static', filename='zari.png') }}" alt="Bot" class="profile-pic">
-                <div class="message-text">Привет, меня зовут Заря! Я буду твоим проектным наставником, и я очень хотела бы с тобой познакомиться, как тебя зовут?🥹
+    <!-- Header Section (Navbar) -->
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <a class="navbar-brand" href="#">Заря: твой ИИ-помощник</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Курсы</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">О нас</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Контакты</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Профиль</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Container (Chat) -->
+    <div class="container-fluid">
+        <div class="chat-container">
+            <div class="chat-box" id="chatBox">
+                <!-- Example of Заря's first message -->
+                <div class="bot-message message">
+                    <img src="{{ url_for('static', filename='zari.png') }}" alt="Bot" class="profile-pic">
+                    <div class="message-text">Привет, меня зовут Заря! Я буду твоим проектным наставником, и я очень хотела бы с тобой познакомиться, как тебя зовут?🥹</div>
                 </div>
             </div>
-        </div>
 
-        <div class="input-group">
-            <input type="text" class="form-control" id="userInput" placeholder="Ваш ответ...">
-            <div class="input-group-append">
-                <button class="btn btn-primary" id="sendBtn">Отправить</button>
+            <!-- Input field -->
+            <div class="input-container">
+                <div class="input-group">
+                    <textarea class="form-control" id="userInput" rows="1" placeholder="Ваш ответ..."></textarea>
+                    <div class="input-group-append">
+                        <button class="btn btn-primary" id="sendBtn">Отправить</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- jQuery для AJAX запросов -->
+    <!-- jQuery for AJAX requests -->
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-
     <script>
         $(document).ready(function() {
+            // Автоматическое расширение текстового поля
+            $('#userInput').on('input', function() {
+                this.style.height = 'auto';
+                this.style.height = (this.scrollHeight) + 'px';
+            });
+
             $('#sendBtn').click(function() {
                 sendMessage();
             });
 
             $('#userInput').keypress(function(e) {
-                if (e.which == 13) {
+                if (e.which == 13 && !e.shiftKey) {
+                    e.preventDefault(); // Предотвращаем переход на новую строку
                     sendMessage();
                 }
             });
@@ -118,34 +202,49 @@
                 if (userInput.trim() !== '') {
                     $('#chatBox').append('<div class="user-message message">' + userInput + '</div>');
                     $('#userInput').val('');
+                    $('#userInput').css('height', 'auto'); // Сброс высоты текстового поля
+
+                    // Показать индикатор загрузки как сообщение от чатбота с Bootstrap spinner
+                    var loadingMessage = `
+                        <div class="bot-message message" id="loading">
+                            <img src="{{ url_for('static', filename='zari.png') }}" alt="Bot" class="profile-pic">
+                            <div class="message-text">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="sr-only">Заря печатает...</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    $('#chatBox').append(loadingMessage);
+                    $('#chatBox').scrollTop($('#chatBox')[0].scrollHeight);
 
                     // Отправляем запрос на сервер
                     $.ajax({
-                        url: '/next',
-                        method: 'POST',
                         contentType: 'application/json',
-                        data: JSON.stringify({ user_input: userInput }),
-                        success: function(response) {
+                        data: JSON.stringify({user_input: userInput}),
+                        error: function () {
+                            alert('Ошибка при отправке сообщения!');
+
+                            // Удалить индикатор загрузки в случае ошибки
+                            $('#loading').remove();
+                        },
+                        method: 'POST',
+                        success: function (response) {
                             var botMessage = formatMessage(response.response);
                             $('#chatBox').append(botMessage);
                             $('#chatBox').scrollTop($('#chatBox')[0].scrollHeight);
+
+                            // Удалить индикатор загрузки после ответа
+                            $('#loading').remove();
                         },
-                        error: function() {
-                            alert('Ошибка при отправке сообщения!');
-                        }
+                        url: '/next'
                     });
                 }
             }
 
-            // Function to format the bot's message with bold and numeration handling
             function formatMessage(message) {
-                // Handle bold formatting for words between **
                 message = message.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-
-                // Add new lines before numerations (e.g., 1., 2., etc.)
                 message = message.replace(/(\d+\.\s)/g, '\n$1');
-
-                // Return the formatted message with Заря's icon
                 return `
                     <div class="bot-message message">
                         <img src="{{ url_for('static', filename='zari.png') }}" alt="Bot" class="profile-pic">
